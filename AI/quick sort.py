@@ -1,50 +1,41 @@
 import random
 import time
 
-def deterministic_partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
+def deterministic_quicksort(arr):
+    if len(arr)<=1:
+        return arr
+    pivot = arr[len(arr)//2]
+    left = [x for x in arr if x<pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x >pivot ]
+    return deterministic_quicksort(left) +  middle + deterministic_quicksort(right)
 
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
+def randomized_quicksort(arr):
+    if len(arr)<=1:
+        return arr
+    
+    pivot = random.choice(arr)
+    left = [x for x in arr if x<pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x >pivot ]
+    return randomized_quicksort(left) + middle + randomized_quicksort(right)
 
-    arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1
 
-def deterministic_quicksort(arr, low, high):
-    if low < high:
-        pivot_index = deterministic_partition(arr, low, high)
+if __name__ == "__main__":
+    data_size =5000
+    data = [random.randint(1,1000) for i in range(data_size)]
 
-        deterministic_quicksort(arr, low, pivot_index - 1)
-        deterministic_quicksort(arr, pivot_index + 1, high)
 
-def randomized_partition(arr, low, high):
-    pivot_index = random.randint(low, high)
-    arr[pivot_index], arr[high] = arr[high], arr[pivot_index]
-    return deterministic_partition(arr, low, high)
-
-def randomized_quicksort(arr, low, high):
-    if low < high:
-        pivot_index = randomized_partition(arr, low, high)
-
-        randomized_quicksort(arr, low, pivot_index - 1)
-        randomized_quicksort(arr, pivot_index + 1, high)
-
-def analyze_quicksort_performance(sort_function, arr):
     start_time = time.time()
-    sort_function(arr, 0, len(arr) - 1)
+    sorted_data = deterministic_quicksort(data)
     end_time = time.time()
-    return end_time - start_time
+    deterministic_time = end_time - start_time
 
-# Example usage and analysis
-arr = [random.randint(1, 1000) for i in range(1000)]
 
-# Analyzing deterministic QuickSort
-deterministic_time = analyze_quicksort_performance(deterministic_quicksort, arr.copy())
-print(f"Deterministic QuickSort took {deterministic_time:.6f} seconds")
+    start_time = time.time()
+    randomized_sorted_data = randomized_quicksort(data)
+    end_time = time.time()
+    randomized_time = end_time - start_time
 
-# Analyzing randomized QuickSort
-randomized_time = analyze_quicksort_performance(randomized_quicksort, arr.copy())
-print(f"Randomized QuickSort took {randomized_time:.6f} seconds")
+    print(f"Deterministic Quick Sort Time: {deterministic_time:.6f} seconds")
+    print(f"Randomized Quick Sort Time: {randomized_time:.6f} seconds")
